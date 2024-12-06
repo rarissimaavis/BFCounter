@@ -23,6 +23,9 @@
 #include "KmerIterator.hpp"
 #include "BloomFilter.hpp"
 #include "bloom_filter.hpp"
+#include <chrono>
+#include <sys/resource.h>
+#include <iostream>
 
 #include "QLogTable.hpp"
 
