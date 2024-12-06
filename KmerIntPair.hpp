@@ -23,13 +23,24 @@ struct KmerIntPair {
 
 
 struct SelectKmerKey {
-  const Kmer& operator()(const KmerIntPair &p) const {
+  typedef Kmer result_type;
+  typedef Kmer key_type;
+  typedef const Kmer& argument_type;
+
+  result_type operator()(const KmerIntPair &p) const {
     return p.GetKey();
+  }
+
+  result_type operator()(const KmerIntPair *p) const {
+    return p->GetKey();
   }
 };
 
 struct SetKmerKey {
-  void operator()(KmerIntPair *value, const Kmer& km);
+  using result_type = void;
+  void operator()(KmerIntPair* value, const Kmer& km) const {
+    value->SetKey(km);
+  }
 };
 
 

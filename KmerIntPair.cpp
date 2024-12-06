@@ -46,9 +46,3 @@ const Kmer& KmerIntPair::GetKey() const {
 void KmerIntPair::SetKey(const Kmer& km) {
   memcpy(this, &km, sizeof(Kmer));
 }
-
-void SetKmerKey::operator()(KmerIntPair *value, const Kmer& km) {
-  memcpy(value + KmerIntPair::KmerOffset, &km, sizeof(Kmer));
-}
-
-
