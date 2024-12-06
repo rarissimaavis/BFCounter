@@ -615,31 +615,45 @@ void CountBF_Normal(const CountBF_ProgramOptions &opt) {
   }
 }
 
+
 void CountBF(int argc, char **argv) {
-  
-  CountBF_ProgramOptions opt;
-  CountBF_ParseOptions(argc,argv,opt);
+    auto start_time = std::chrono::high_resolution_clock::now();
 
-  if (argc < 2) {
-    CountBF_PrintUsage();
-    exit(1);
-  }
-  
-  if (!CountBF_CheckOptions(opt)) {
-    CountBF_PrintUsage();
-    exit(1);
-  }
-  
-  // set static global k-value
-  Kmer::set_k(opt.k);
+    struct rusage usage_before, usage_after;
+    getrusage(RUSAGE_SELF, &usage_before);
 
-  if (opt.verbose) {
-    CountBF_PrintSummary(opt);
-  }
+    CountBF_ProgramOptions opt;
+    CountBF_ParseOptions(argc, argv, opt);
 
-  if (opt.quake) {
-    CountBF_Quake(opt);
-  } else {
-    CountBF_Normal(opt);
-  }
+    if (argc < 2) {
+        CountBF_PrintUsage();
+        exit(1);
+    }
+    
+    if (!CountBF_CheckOptions(opt)) {
+        CountBF_PrintUsage();
+        exit(1);
+    }
+    
+    Kmer::set_k(opt.k);
+
+    if (opt.verbose) {
+        CountBF_PrintSummary(opt);
+    }
+
+    if (opt.quake) {
+        CountBF_Quake(opt);
+    } else {
+        CountBF_Normal(opt);
+    }
+
+    auto end_time = std::chrono::high_resolution_clock::now();
+    getrusage(RUSAGE_SELF, &usage_after);
+
+    std::chrono::duration<double> elapsed_time = end_time - start_time;
+    long memory_used = usage_after.ru_maxrss - usage_before.ru_maxrss;
+
+    std::cout << "K-mer counting completed!" << std::endl;
+    std::cout << "Execution time: " << elapsed_time.count() << " seconds" << std::endl;
+    std::cout << "Peak memory usage: " << memory_used << " KB" << std::endl;
 }
